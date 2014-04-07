@@ -40,7 +40,7 @@ public class NetworkParameters implements Serializable {
     /**
      * The protocol version this library implements.
      */
-    public static final int PROTOCOL_VERSION = 60001;
+    public static final int PROTOCOL_VERSION = 60005;
 
     /**
      * The alert signing key originally owned by Satoshi, and now passed on to Gavin along with a few others.
@@ -97,6 +97,11 @@ public class NetworkParameters implements Serializable {
      * signatures using it.
      */
     public /*final*/ byte[] alertSigningKey;
+    
+    /**
+     * interval needed by tests
+     **/
+     public int interval;
 
     /**
      * See getId(). This may be null for old deserialized wallets. In that case we derive it heuristically
