@@ -742,7 +742,6 @@ public abstract class AbstractBlockChain {
         }
             
         int interval = nTargetTimespanCurrent/params.targetSpacing;
-        log.info("basic interval: " + interval);
         
        if ((storedPrev.getHeight() + 1) >= nDifficultySwitchHeight204K) {
            interval = nTargetTimespanCurrent/60;
@@ -802,7 +801,6 @@ public abstract class AbstractBlockChain {
         // Additional averaging over 4x nInterval window
         if(whichDifficultyProtocol == 2) {
             interval *= 4;
-log.info("interval protocol=2: " + interval);
             cursor = blockStore.get(prev.getHash());
             goBack = interval - 1;
             if (cursor.getHeight() + 1 != interval)
@@ -840,7 +838,6 @@ log.info("interval protocol=2: " + interval);
         
         if(whichDifficultyProtocol == 3) {
             interval *= 480;
-log.info(" interval protocol=3: " + interval);
             StoredBlock cursorLong = blockStore.get(prev.getHash());
             Block blockIntervalAgoShort = cursorLong.getHeader();
             Block blockIntervalAgoMedium = cursorLong.getHeader();
