@@ -29,7 +29,7 @@
     <artifactId>feathercoinj</artifactId>
 
     <name>feathercoinj</name>
-    <description>A Java Litecoin library</description>
+    <description>A Java Feathercoin library</description>
 
     <profiles>
         <profile>

@@ -742,9 +742,11 @@ public abstract class AbstractBlockChain {
         }
             
         int interval = nTargetTimespanCurrent/params.targetSpacing;
-        if ((storedPrev.getHeight() + 1) >= nDifficultySwitchHeight204K) {
-            interval = nTargetTimespanCurrent/60;
-        }
+        log.info("basic interval: " + interval);
+        
+       if ((storedPrev.getHeight() + 1) >= nDifficultySwitchHeight204K) {
+           interval = nTargetTimespanCurrent/60;
+       }
         
         // Is this supposed to be a difficulty transition point?
         if ((storedPrev.getHeight() + 1) % interval != 0 && 
@@ -800,7 +802,7 @@ public abstract class AbstractBlockChain {
         // Additional averaging over 4x nInterval window
         if(whichDifficultyProtocol == 2) {
             interval *= 4;
-
+log.info("interval protocol=2: " + interval);
             cursor = blockStore.get(prev.getHash());
             goBack = interval - 1;
             if (cursor.getHeight() + 1 != interval)
@@ -838,7 +840,7 @@ public abstract class AbstractBlockChain {
         
         if(whichDifficultyProtocol == 3) {
             interval *= 480;
-
+log.info(" interval protocol=3: " + interval);
             StoredBlock cursorLong = blockStore.get(prev.getHash());
             Block blockIntervalAgoShort = cursorLong.getHeader();
             Block blockIntervalAgoMedium = cursorLong.getHeader();
