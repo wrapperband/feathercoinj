@@ -708,6 +708,7 @@ public abstract class AbstractBlockChain {
         Block prev = storedPrev.getHeader();
         int nDifficultySwitchHeight33K = 33000;
         int nDifficultySwitchHeight87K = 87948;
+        int nDifficultySwitchHeight204K = 204639;
         int whichDifficultyProtocol = 0; // Default to first
         int nTargetTimespanCurrent = params.targetTimespan * 16; // 3.5 days
         int nActualTimespanMax = nTargetTimespanCurrent*4;
@@ -722,7 +723,8 @@ public abstract class AbstractBlockChain {
             nActualTimespanMax = (nTargetTimespanCurrent*99)/70;
             nActualTimespanMin = (nTargetTimespanCurrent*70)/99;
         }
-        else if(storedPrev.getHeight() + 1 >= nDifficultySwitchHeight87K)
+        else if(storedPrev.getHeight() + 1 >= nDifficultySwitchHeight87K&&
+           storedPrev.getHeight() + 1 <  nDifficultySwitchHeight204K)
         {
             whichDifficultyProtocol = 2;
             nTargetTimespanCurrent = params.targetTimespan; // 7/32 days
@@ -730,13 +732,26 @@ public abstract class AbstractBlockChain {
             nActualTimespanMax = (nTargetTimespanCurrent*494)/453;
             nActualTimespanMin = (nTargetTimespanCurrent*453)/494;
         }
+        else if(storedPrev.getHeight() + 1 >= nDifficultySwitchHeight204K)
+        {
+            whichDifficultyProtocol = 3;
+            nTargetTimespanCurrent = 60; // 1 minute
+            // The 3rd hard fork (1.0905077 aka 9% difficulty limiter) 
+            nActualTimespanMax = (nTargetTimespanCurrent*494)/453;
+            nActualTimespanMin = (nTargetTimespanCurrent*453)/494;
+        }
             
         int interval = nTargetTimespanCurrent/params.targetSpacing;
+        
+       if ((storedPrev.getHeight() + 1) >= nDifficultySwitchHeight204K) {
+           interval = nTargetTimespanCurrent/60;
+       }
         
         // Is this supposed to be a difficulty transition point?
         if ((storedPrev.getHeight() + 1) % interval != 0 && 
             (storedPrev.getHeight() + 1) != nDifficultySwitchHeight33K &&
-            (storedPrev.getHeight() + 1) != nDifficultySwitchHeight87K)
+            (storedPrev.getHeight() + 1) != nDifficultySwitchHeight87K &&
+            (storedPrev.getHeight() + 1) < nDifficultySwitchHeight204K)
         {
 
             // TODO: Refactor this hack after 0.5 is released and we stop supporting deserialization compatibility.
@@ -786,7 +801,6 @@ public abstract class AbstractBlockChain {
         // Additional averaging over 4x nInterval window
         if(whichDifficultyProtocol == 2) {
             interval *= 4;
-
             cursor = blockStore.get(prev.getHash());
             goBack = interval - 1;
             if (cursor.getHeight() + 1 != interval)
@@ -821,6 +835,58 @@ public abstract class AbstractBlockChain {
                      " nActualTimeSpanAvg = " + nActualTimespanAvg + 
                      ", nActualTimespan (damped) = " + nActualTimespan);
         } 
+        
+        if(whichDifficultyProtocol == 3) {
+            interval *= 480;
+            StoredBlock cursorLong = blockStore.get(prev.getHash());
+            Block blockIntervalAgoShort = cursorLong.getHeader();
+            Block blockIntervalAgoMedium = cursorLong.getHeader();
+            
+            goBack = interval - 1;
+            if (cursorLong.getHeight() + 1 != interval)
+                goBack = interval;
+                        
+            for (int i = 0; i < goBack; i++) {
+                if (cursorLong == null) {
+                    // This should never happen. If it does, it means we are following an incorrect or busted chain.
+                    throw new VerificationException(
+                            "Difficulty transition point but we did not find a way back to the genesis block.");
+                }
+                cursorLong = blockStore.get(cursorLong.getHeader().getPrevBlockHash());
+                if (i == 14) {
+                    blockIntervalAgoShort = cursorLong.getHeader();
+                    log.info("Got block " + cursorLong.getHeight() + " to use for short calc");
+                }
+                if (i == 119) {
+                    blockIntervalAgoMedium = cursorLong.getHeader();
+                    log.info("Got block " + cursorLong.getHeight() + " to use for medium calc");
+                }
+            }
+            
+            Block blockIntervalAgoLong = cursorLong.getHeader();
+            log.info("Got block " + cursorLong.getHeight() + " to use for long calc");
+                
+            long nActualTimespanShort = (prev.getTimeSeconds() - blockIntervalAgoShort.getTimeSeconds()) / 15;
+            log.info("nActualTimespanShort = " + nActualTimespanShort);
+            long nActualTimespanMedium = (prev.getTimeSeconds() - blockIntervalAgoMedium.getTimeSeconds()) / 120;
+            log.info("nActualTimespanMedium = " + nActualTimespanMedium);
+            long nActualTimespanLong = (prev.getTimeSeconds() - blockIntervalAgoLong.getTimeSeconds()) / 480;
+            log.info("nActualTimespanLong = " + nActualTimespanLong);
+ 
+            long nActualTimespanAvg = (nActualTimespanShort + nActualTimespanMedium + nActualTimespanLong) / 3;
+            
+            // Apply .25 damping
+            nActualTimespan = nActualTimespanAvg + (3 * nTargetTimespanCurrent);
+            nActualTimespan /= 4;
+            
+            log.info("nActualTimespan (damped) = " + nActualTimespan);
+
+            log.info("RETARGET: nActualTimespanShort " + nActualTimespanShort + 
+                     " nActualTimespanMedium " + nActualTimespanMedium + 
+                     " nActualTimespanLong " + nActualTimespanLong + 
+                     " nActualTimeSpanAvg = " + nActualTimespanAvg + 
+                     ", nActualTimespan (damped) = " + nActualTimespan);
+        }
 
         // Limit the adjustment step.
         if (nActualTimespan < nActualTimespanMin)

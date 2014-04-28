@@ -22,14 +22,14 @@
     <parent>
         <groupId>com.google</groupId>
         <artifactId>feathercoinj-parent</artifactId>
-        <version>0.95-SNAPSHOT</version>
+        <version>0.96-SNAPSHOT</version>
     </parent>
 
     <groupId>com.google</groupId>
     <artifactId>feathercoinj</artifactId>
 
     <name>feathercoinj</name>
-    <description>A Java Litecoin library</description>
+    <description>A Java Feathercoin library</description>
 
     <profiles>
         <profile>

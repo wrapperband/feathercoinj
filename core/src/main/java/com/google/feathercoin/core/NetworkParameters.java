@@ -40,7 +40,7 @@ public class NetworkParameters implements Serializable {
     /**
      * The protocol version this library implements.
      */
-    public static final int PROTOCOL_VERSION = 60005;
+    public static final int PROTOCOL_VERSION = 60006;
 
     /**
      * The alert signing key originally owned by Satoshi, and now passed on to Gavin along with a few others.
@@ -288,8 +288,11 @@ public class NetworkParameters implements Serializable {
     // Block 33000 change
     // public static final int TARGET_TIMESPAN = (int)(7 * 24 * 60 * 60) / 8;  // 7/8 days
     // 0.6.4.4 change
-    public static final int TARGET_TIMESPAN = (int)(7 * 24 * 60 * 60) / 32;    // 7/32 days 
-    public static final int TARGET_SPACING = (int)(2.5 * 60);                  // 2.5 minutes per block.
+     public static final int TARGET_TIMESPAN = (int)(7 * 24 * 60 * 60) / 32;    // 7/32 days 
+     public static final int TARGET_SPACING = (int)(2.5 * 60);                  // 2.5 minutes per block.
+    // Block 204639
+   // public static final int TARGET_TIMESPAN = (int)(60); // 1 minute timespan
+   // public static final int TARGET_SPACING = (int)(60); // 1 minute block
 
     
     /**
