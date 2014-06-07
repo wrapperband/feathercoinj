@@ -43,9 +43,9 @@ public class NetworkParameters implements Serializable {
     public static final int PROTOCOL_VERSION = 60006;
 
     /**
-     * The alert signing key originally owned by Satoshi, and now passed on to Gavin along with a few others.
+     * This is the latest alert key used in Feathercoin.
      */
-    public static final byte[] SATOSHI_KEY = Hex.decode("04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284");
+    public static final byte[] SATOSHI_KEY = Hex.decode("043c19a29fe8f763369aea68107e82854af7b072fc7d2d2adb87d2a3b40b51ab0d0e77805096e255a87388b175fd4a49d93d9b6c878004975e41222a3b85086eef");
 
     /** The string returned by getId() for the main, production network where people trade things. */
     public static final String ID_PRODNET = "org.feathercoin.production";
