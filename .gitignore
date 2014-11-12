@@ -3,3 +3,4 @@ target
 .classpath
 .settings
 .idea
+core/src/main/java/com/google/feathercoin/core/.directory
