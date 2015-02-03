@@ -16,9 +16,13 @@
 
 package com.google.feathercoin.core;
 
+
+
+import com.google.feathercoin.crypto.hasher;
+//import com.crypto.algo.neoscryptj.hasher;
+
 import org.spongycastle.crypto.digests.RIPEMD160Digest;
 import org.spongycastle.util.encoders.Hex;
-import com.lambdaworks.crypto.SCrypt;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -164,7 +168,13 @@ public class Utils {
     
     public static byte[] scryptDigest(byte[] input) {
         try {
-            return SCrypt.scrypt(input, input, 1024, 1, 1, 32);
+
+            byte[] result = hasher.getHash(input, 0x3);
+            if (result.length != 32) {
+                throw new RuntimeException("hasher result lenght != 32");
+            }
+            return result;
+           // return SCrypt.scrypt(input, input, 1024, 1, 1, 32);
         } catch (Exception e) {
             return null;
         }
