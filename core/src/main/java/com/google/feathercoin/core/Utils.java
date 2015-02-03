@@ -168,13 +168,14 @@ public class Utils {
     
     public static byte[] scryptDigest(byte[] input) {
         try {
+/* todo: make profile variable instead of using scrypt only (0x3)
 
+ */
             byte[] result = hasher.getHash(input, 0x3);
             if (result.length != 32) {
                 throw new RuntimeException("hasher result lenght != 32");
             }
             return result;
-           // return SCrypt.scrypt(input, input, 1024, 1, 1, 32);
         } catch (Exception e) {
             return null;
         }
