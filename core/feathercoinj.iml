@@ -15,7 +15,6 @@
     <orderEntry type="library" name="com.lambdaworks:scrypt:1.4.0" level="project" />
     <orderEntry type="library" name="org.slf4j:slf4j-api:1.6.4" level="project" />
     <orderEntry type="library" name="org.slf4j:slf4j-jdk14:1.6.4" level="project" />
-    <orderEntry type="library" exported="" name="neoscryptj-1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="neoscryptj" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.easymock:easymock:3.0" level="project" />
@@ -31,6 +30,7 @@
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
     <orderEntry type="library" name="Maven: net.jcip:jcip-annotations:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.lambdaworks:scrypt:1.3.3" level="project" />
+    <orderEntry type="library" name="com.github.igor-petruk.protobuf:protobuf-maven-plugin:0.6.3" level="project" />
   </component>
 </module>
 
