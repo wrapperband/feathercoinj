@@ -900,16 +900,16 @@ public abstract class AbstractBlockChain {
         if (storedPrev.getHeight() >=nSwitchAlgoNeoscrypt)
             newDifficulty= Utils.changeEndian(newDifficulty,16);
         */
-        log.warn("calculated diff:" + newDifficulty.toString(16) +"\n"+
+        log.info("calculated diff:" + newDifficulty.toString(16) +"\n"+
         "received Diff: "+ receivedDifficulty.toString(16));
         /*
         TODO: enable difficulty check again
         */
         if (newDifficulty.compareTo(receivedDifficulty) != 0)
-            throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
-                    receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16) + " TargetTimespan: " + nTargetTimespanCurrent);
-   //     log.error("Network provided difficulty bits do not match what was calculated: " +
-   //             receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16) + " TargetTimespan: " + nTargetTimespanCurrent);
+       //     throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
+       //             receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16) + " TargetTimespan: " + nTargetTimespanCurrent);
+        log.error("Network provided difficulty bits do not match what was calculated: " +
+                receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16) + " TargetTimespan: " + nTargetTimespanCurrent);
         }
 
     private void checkTestnetDifficulty(StoredBlock storedPrev, Block prev, Block next) throws VerificationException, BlockStoreException {
