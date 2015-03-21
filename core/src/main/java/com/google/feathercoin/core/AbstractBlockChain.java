@@ -690,48 +690,48 @@ public abstract class AbstractBlockChain {
         int nSwitchAlgoNeoscrypt = 432000;
         int whichDifficultyProtocol = 0; // Default to first
         int nTargetTimespanCurrent = params.targetTimespan * 16; // 3.5 days
-        int nActualTimespanMax = nTargetTimespanCurrent*4;
-        int nActualTimespanMin = nTargetTimespanCurrent/4;
+        int nActualTimespanMax = nTargetTimespanCurrent * 4;
+        int nActualTimespanMin = nTargetTimespanCurrent / 4;
 
-        if(storedPrev.getHeight() + 1 >= nDifficultySwitchHeight33K &&
-           storedPrev.getHeight() + 1 <  nDifficultySwitchHeight87K)
-        {
+        if (storedPrev.getHeight() + 1 >= nDifficultySwitchHeight33K &&
+                storedPrev.getHeight() + 1 < nDifficultySwitchHeight87K) {
             whichDifficultyProtocol = 1;
             nTargetTimespanCurrent = params.targetTimespan * 4; // 7/8 days
             // The 1st hard fork (1.4142857 aka 41% difficulty limiter)
-            nActualTimespanMax = (nTargetTimespanCurrent*99)/70;
-            nActualTimespanMin = (nTargetTimespanCurrent*70)/99;
-        }
-        else if(storedPrev.getHeight() + 1 >= nDifficultySwitchHeight87K&&
-           storedPrev.getHeight() + 1 <  nDifficultySwitchHeight204K)
-        {
+            nActualTimespanMax = (nTargetTimespanCurrent * 99) / 70;
+            nActualTimespanMin = (nTargetTimespanCurrent * 70) / 99;
+        } else if (storedPrev.getHeight() + 1 >= nDifficultySwitchHeight87K &&
+                storedPrev.getHeight() + 1 < nDifficultySwitchHeight204K) {
             whichDifficultyProtocol = 2;
             nTargetTimespanCurrent = params.targetTimespan; // 7/32 days
             // The 2nd hard fork (1.0905077 aka 9% difficulty limiter)
-            nActualTimespanMax = (nTargetTimespanCurrent*494)/453;
-            nActualTimespanMin = (nTargetTimespanCurrent*453)/494;
-        }
-        else if(storedPrev.getHeight() + 1 >= nDifficultySwitchHeight204K)
-        {
+            nActualTimespanMax = (nTargetTimespanCurrent * 494) / 453;
+            nActualTimespanMin = (nTargetTimespanCurrent * 453) / 494;
+        } else if (storedPrev.getHeight() + 1 >= nDifficultySwitchHeight204K) {
             whichDifficultyProtocol = 3;
             nTargetTimespanCurrent = 60; // 1 minute
             // The 3rd hard fork (1.0905077 aka 9% difficulty limiter)
-            nActualTimespanMax = (nTargetTimespanCurrent*494)/453;
-            nActualTimespanMin = (nTargetTimespanCurrent*453)/494;
+            nActualTimespanMax = (nTargetTimespanCurrent * 494) / 453;
+            nActualTimespanMin = (nTargetTimespanCurrent * 453) / 494;
         }
+        /*
+        We don't check old scrypt blocks with block number < 432000 to speed up initial syncronization
 
-        int interval = nTargetTimespanCurrent/params.targetSpacing;
+         */
+        if ( whichDifficultyProtocol < nSwitchAlgoNeoscrypt) return;
 
-       if ((storedPrev.getHeight() + 1) >= nDifficultySwitchHeight204K) {
-           interval = nTargetTimespanCurrent/60;
-       }
+
+        int interval = nTargetTimespanCurrent / params.targetSpacing;
+
+        if ((storedPrev.getHeight() + 1) >= nDifficultySwitchHeight204K) {
+            interval = nTargetTimespanCurrent / 60;
+        }
 
         // Is this supposed to be a difficulty transition point?
         if ((storedPrev.getHeight() + 1) % interval != 0 &&
-            (storedPrev.getHeight() + 1) != nDifficultySwitchHeight33K &&
-            (storedPrev.getHeight() + 1) != nDifficultySwitchHeight87K &&
-            (storedPrev.getHeight() + 1) < nDifficultySwitchHeight204K)
-        {
+                (storedPrev.getHeight() + 1) != nDifficultySwitchHeight33K &&
+                (storedPrev.getHeight() + 1) != nDifficultySwitchHeight87K &&
+                (storedPrev.getHeight() + 1) < nDifficultySwitchHeight204K) {
 
             // TODO: Refactor this hack after 0.5 is released and we stop supporting deserialization compatibility.
             // This should be a method of the NetworkParameters, which should in turn be using singletons and a subclass
@@ -745,7 +745,7 @@ public abstract class AbstractBlockChain {
             if (nextBlock.getDifficultyTarget() != prev.getDifficultyTarget())
                 throw new VerificationException("Unexpected change in difficulty at height " + storedPrev.getHeight() +
                         ": " + Long.toHexString(nextBlock.getDifficultyTarget()) + " vs " +
-                        Long.toHexString(prev.getDifficultyTarget()) + ", Interval: "+interval);
+                        Long.toHexString(prev.getDifficultyTarget()) + ", Interval: " + interval);
             return;
         }
 
@@ -771,14 +771,14 @@ public abstract class AbstractBlockChain {
             log.info("Difficulty transition traversal took {}msec", elapsed);
 
         // Check if our cursor is null.  If it is, we've used checkpoints to restore.
-        if(cursor == null) return;
+        if (cursor == null) return;
 
         Block blockIntervalAgo = cursor.getHeader();
         long nActualTimespan = (long) (prev.getTimeSeconds() - blockIntervalAgo.getTimeSeconds());
         log.info("nActualTimespan before retarget: " + nActualTimespan);
 
         // Additional averaging over 4x nInterval window
-        if(whichDifficultyProtocol == 2) {
+        if (whichDifficultyProtocol == 2) {
             interval *= 4;
             cursor = blockStore.get(prev.getHash());
             goBack = interval - 1;
@@ -811,11 +811,11 @@ public abstract class AbstractBlockChain {
             log.info("nActualTimespan (damped) = " + nActualTimespan);
 
             log.info("RETARGET: nActualTimespanLong " + nActualTimespanLong +
-                     " nActualTimeSpanAvg = " + nActualTimespanAvg +
-                     ", nActualTimespan (damped) = " + nActualTimespan);
+                    " nActualTimeSpanAvg = " + nActualTimespanAvg +
+                    ", nActualTimespan (damped) = " + nActualTimespan);
         }
 
-        if(whichDifficultyProtocol == 3) {
+        if (whichDifficultyProtocol == 3) {
             interval *= 480;
             StoredBlock cursorLong = blockStore.get(prev.getHash());
             Block blockIntervalAgoShort = cursorLong.getHeader();
@@ -861,10 +861,10 @@ public abstract class AbstractBlockChain {
             log.info("nActualTimespan (damped) = " + nActualTimespan);
 
             log.info("RETARGET: nActualTimespanShort " + nActualTimespanShort +
-                     " nActualTimespanMedium " + nActualTimespanMedium +
-                     " nActualTimespanLong " + nActualTimespanLong +
-                     " nActualTimeSpanAvg = " + nActualTimespanAvg +
-                     ", nActualTimespan (damped) = " + nActualTimespan);
+                    " nActualTimespanMedium " + nActualTimespanMedium +
+                    " nActualTimespanLong " + nActualTimespanLong +
+                    " nActualTimeSpanAvg = " + nActualTimespanAvg +
+                    ", nActualTimespan (damped) = " + nActualTimespan);
         }
 
         // Limit the adjustment step.
@@ -893,25 +893,24 @@ public abstract class AbstractBlockChain {
         newDifficulty = newDifficulty.and(mask);
 
 
-
-         /*
-        Neoscrypt uses little endian, so we need to swap bytes
-
-        if (storedPrev.getHeight() >=nSwitchAlgoNeoscrypt)
-            newDifficulty= Utils.changeEndian(newDifficulty,16);
-        */
-        log.info("calculated diff:" + newDifficulty.toString(16) +"\n"+
-        "received Diff: "+ receivedDifficulty.toString(16));
         /*
         TODO: enable difficulty check again
-        */
-        if (newDifficulty.compareTo(receivedDifficulty) != 0)
-       //     throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
-       //             receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16) + " TargetTimespan: " + nTargetTimespanCurrent);
-        log.error("Network provided difficulty bits do not match what was calculated: " +
-                receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16) + " TargetTimespan: " + nTargetTimespanCurrent);
-        }
+       
+        if ((newDifficulty.compareTo(receivedDifficulty) != 0) && (cursor.getHeight() + 1 != nSwitchAlgoNeoscrypt)) {
+          
+            throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
+                    receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16) + " TargetTimespan: " + nTargetTimespanCurrent);
+            } 
+    
+        }*/
+        if (newDifficulty.compareTo(receivedDifficulty) != 0) {
+            log.error("Network provided difficulty bits do not match what was calculated: " +
+                    receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16) + " TargetTimespan: " + nTargetTimespanCurrent);
 
+        }
+    }
+    
+    
     private void checkTestnetDifficulty(StoredBlock storedPrev, Block prev, Block next) throws VerificationException, BlockStoreException {
         checkState(lock.isLocked());
         // After 15th February 2012 the rules on the testnet change to avoid people running up the difficulty
@@ -934,6 +933,7 @@ public abstract class AbstractBlockChain {
                 cursor = cursor.getPrev(blockStore);
             BigInteger cursorDifficulty = cursor.getHeader().getDifficultyTargetAsInteger();
             BigInteger newDifficulty = next.getDifficultyTargetAsInteger();
+
             if (!cursorDifficulty.equals(newDifficulty))
                 throw new VerificationException("Testnet block transition that is not allowed: " +
                     Long.toHexString(cursor.getHeader().getDifficultyTarget()) + " vs " +
