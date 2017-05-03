@@ -1,0 +1,61 @@
+// apply plugin: 'com.android.library'
+apply plugin: 'com.android.application'
+
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.google.protobuf:protobuf-java:3.2.0'
+    }
+}
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "25.0.0"
+
+    defaultConfig {
+        applicationId
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url 'http://repo1.maven.org/maven2' }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'org.slf4s:slf4s-api_2.9.2:1.7.13'
+    compile 'com.google.protobuf:protobuf-java:3.2.0'
+    compile 'com.madgag.spongycastle:core:1.56.0.0'
+    compile 'com.google.api.client:google-api-client-repackaged-com-google-common-base:1.2.3-alpha'
+    compile 'com.google.guava:guava:21.0'
+    compile 'com.lambdaworks:scrypt:1.4.0'
+    compile 'net.jcip:jcip-annotations:1.0'
+    compile 'org.jboss.netty:netty:3.2.10.Final'
+    compile 'org.easymock:easymock:3.4'
+    testCompile 'junit:junit:4.12'
+}

@@ -1,1 +1,1 @@
-include ':feathercoinj'
+include ':feathercoinj', ':core'

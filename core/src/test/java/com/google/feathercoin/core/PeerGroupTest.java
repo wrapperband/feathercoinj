@@ -46,7 +46,7 @@ public class PeerGroupTest extends TestWithPeerGroup {
 
     @After
     public void shutDown() throws Exception {
-        peerGroup.stopAndWait();
+        peerGroup.shutDown();
     }
 
     @Test
@@ -78,7 +78,7 @@ public class PeerGroupTest extends TestWithPeerGroup {
             public void shutdown() {
             }
         });
-        peerGroup.startAndWait();
+        peerGroup.startUp();
         sem.acquire();
         // Check that we did indeed throw an exception. If we got here it means we threw and then PeerGroup tried
         // again a bit later.
@@ -88,7 +88,7 @@ public class PeerGroupTest extends TestWithPeerGroup {
     @Test
     public void receiveTxBroadcast() throws Exception {
         // Check that when we receive transactions on all our peers, we do the right thing.
-        peerGroup.startAndWait();
+        peerGroup.startUp();
 
         // Create a couple of peers.
         FakeChannel p1 = connectPeer(1);
@@ -120,13 +120,13 @@ public class PeerGroupTest extends TestWithPeerGroup {
         assertNotNull(getdata);
         inbound(p2, new NotFoundMessage(unitTestParams, getdata.getItems()));
         assertEquals(value, wallet.getBalance(Wallet.BalanceType.ESTIMATED));
-        peerGroup.stopAndWait();
+        peerGroup.shutDown();
     }
 
     @Test
     public void singleDownloadPeer1() throws Exception {
         // Check that we don't attempt to retrieve blocks on multiple peers.
-        peerGroup.startAndWait();
+        peerGroup.startUp();
 
         // Create a couple of peers.
         FakeChannel p1 = connectPeer(1);
@@ -153,7 +153,7 @@ public class PeerGroupTest extends TestWithPeerGroup {
         // Peer 2 fetches it next time it hears an inv (should it fetch immediately?).
         inbound(p2, inv);
         assertTrue(outbound(p2) instanceof GetDataMessage);
-        peerGroup.stop();
+        peerGroup.shutDown();
     }
 
     @Test
@@ -161,7 +161,7 @@ public class PeerGroupTest extends TestWithPeerGroup {
         // Check that we don't attempt multiple simultaneous block chain downloads, when adding a new peer in the
         // middle of an existing chain download.
         // Create a couple of peers.
-        peerGroup.startAndWait();
+        peerGroup.startUp();
 
         // Create a couple of peers.
         FakeChannel p1 = connectPeer(1);
@@ -190,7 +190,7 @@ public class PeerGroupTest extends TestWithPeerGroup {
         FakeChannel p2 = connectPeer(2);
         Message message = (Message)outbound(p2);
         assertNull(message == null ? "" : message.toString(), message);
-        peerGroup.stop();
+        peerGroup.shutDown();
     }
 
     @Test
@@ -347,7 +347,7 @@ public class PeerGroupTest extends TestWithPeerGroup {
 
     @Test
     public void noPings() throws Exception {
-        peerGroup.startAndWait();
+        peerGroup.startUp();
         peerGroup.setPingIntervalMsec(0);
         VersionMessage versionMessage = new VersionMessage(params, 2);
         versionMessage.clientVersion = Pong.MIN_PROTOCOL_VERSION;
@@ -357,7 +357,7 @@ public class PeerGroupTest extends TestWithPeerGroup {
 
     @Test
     public void pings() throws Exception {
-        peerGroup.startAndWait();
+        peerGroup.startUp();
         peerGroup.setPingIntervalMsec(100);
         VersionMessage versionMessage = new VersionMessage(params, 2);
         versionMessage.clientVersion = Pong.MIN_PROTOCOL_VERSION;
@@ -373,7 +373,7 @@ public class PeerGroupTest extends TestWithPeerGroup {
 
     @Test
     public void downloadPeerSelection() throws Exception {
-        peerGroup.startAndWait();
+        peerGroup.startUp();
         VersionMessage versionMessage2 = new VersionMessage(params, 2);
         versionMessage2.clientVersion = 60000;
         VersionMessage versionMessage3 = new VersionMessage(params, 3);

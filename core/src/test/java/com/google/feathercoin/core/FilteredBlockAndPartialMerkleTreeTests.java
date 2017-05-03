@@ -85,7 +85,7 @@ public class FilteredBlockAndPartialMerkleTreeTests extends TestWithPeerGroup {
         peerGroup.addWallet(wallet);
         blockChain.addWallet(wallet);
 
-        peerGroup.start();
+        peerGroup.startUp();
 
         // Create a peer.
         FakeChannel p1 = connectPeer(1);
@@ -125,6 +125,6 @@ public class FilteredBlockAndPartialMerkleTreeTests extends TestWithPeerGroup {
 
         // Peer 1 goes away.
         closePeer(peerOf(p1));
-        peerGroup.stop();
+        peerGroup.shutDown();
     }
 }
